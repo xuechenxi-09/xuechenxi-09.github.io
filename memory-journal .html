@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时光回忆录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#007AFF',
+                        secondary: '#34C759',
+                        neutral: '#F5F7FA',
+                        'neutral-dark': '#E4E7EB',
+                        'text-primary': '#1C1C1E',
+                        'text-secondary': '#6E6E73',
+                        danger: '#FF3B30'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'ios': '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+                        'ios-hover': '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)',
+                        'ios-pressed': '0 1px 2px rgba(0, 0, 0, 0.1)',
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .transition-ios {
+                transition: all 0.2s ease-in-out;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .bg-texture {
+                background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e4e7eb' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            }
+            .time-counter {
+                letter-spacing: 0.5px;
+                font-weight: 700;
+            }
+            .bg-transition {
+                transition: background-image 1s ease-in-out, opacity 1s ease-in-out;
+            }
+            .bg-fade-in {
+                animation: fadeIn 1s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-neutral bg-texture text-text-primary min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white bg-opacity-80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <h1 class="text-xl font-semibold text-text-primary flex items-center font-medium">
+                <i class="fa fa-book mr-2 text-primary"></i>时光回忆录
+            </h1>
+            <div class="flex items-center space-x-4">
+                <button id="saveBtn" class="text-primary hover:text-primary/80 transition-ios p-2 rounded-full hover:bg-primary/5">
+                    <i class="fa fa-save text-lg"></i>
+                </button>
+                <button id="shareBtn" class="text-primary hover:text-primary/80 transition-ios p-2 rounded-full hover:bg-primary/5">
+                    <i class="fa fa-share-alt text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 时间流逝显示 -->
+    <div id="timeContainer" class="py-8 relative overflow-hidden">
+        <div id="timeBackground" class="absolute inset-0 bg-cover bg-center bg-transition" style="background-image: linear-gradient(to right, #007AFF, #007AFF80);">
+        </div>
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 30px 30px;"></div>
+        </div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <div class="flex justify-end mb-2">
+                <label for="timeBgUpload" class="cursor-pointer text-white/80 hover:text-white transition-ios text-sm flex items-center text-shadow font-medium">
+                    <i class="fa fa-image mr-1"></i> 更换背景
+                    <input type="file" id="timeBgUpload" accept="image/*" class="hidden">
+                </label>
+            </div>
+            <h2 class="text-lg font-semibold mb-3 opacity-90 text-white text-shadow font-medium">我们一起走过的时光</h2>
+            <div id="timeElapsed" class="text-2xl md:text-4xl font-bold tracking-wide mb-1 text-white time-counter text-shadow">
+                <!-- 动态填充时间 -->
+            </div>
+            <p class="text-sm mt-1 opacity-80 text-white text-shadow font-medium">自2023年9月3日起</p>
+        </div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        <!-- 回忆编辑器 -->
+        <section class="mb-8 bg-white rounded-xl shadow-ios p-5 transition-ios hover:shadow-ios-hover">
+            <h2 class="text-xl font-semibold mb-4 pb-2 border-b border-gray-100 flex items-center font-medium">
+                <i class="fa fa-pencil-square-o mr-2 text-primary/70"></i>添加新回忆
+            </h2>
+            
+            <div class="mb-4">
+                <label for="memoryDate" class="block text-text-secondary text-sm mb-1 font-medium">回忆日期</label>
+                <input type="date" id="memoryDate" 
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-ios">
+            </div>
+            
+            <div class="mb-4">
+                <label for="memoryTitle" class="block text-text-secondary text-sm mb-1 font-medium">标题</label>
+                <input type="text" id="memoryTitle" placeholder="给这段回忆起个名字..." 
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary primary outline-none transition-ios">
+            </div>
+            
+            <div class="mb-4">
+                <label for="memoryText" class="block text-text-secondary secondary text-sm mb-1 font-medium">描述</label>
+                <textarea id="memoryText" rows="4" placeholder="描述一下这段美好的回忆..." 
+                          class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-ios resize-none"></textarea>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-text-secondary text-sm mb-1 font-medium">添加照片</label>
+                <div class="border-2 border-dashed border-gray-200 rounded-lg p-5 text-center hover:border-primary transition-ios cursor-pointer bg-gray-50/50" id="photoUploadArea">
+                    <input type="file" id="photoUpload" accept="image/*" class="hidden" multiple>
+                    <i class="fa fa-camera text-3xl text-gray-300 mb-2"></i>
+                    <p class="text-text-secondary text-sm">点击或拖拽照片到这里</p>
+                </div>
+            </div>
+            
+            <button id="addMemoryBtn" class="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-ios flex items-center shadow-sm hover:shadow active:shadow-ios-pressed transform active:scale-[0.98] font-medium">
+                <i class="fa fa-plus mr-2"></i> 保存回忆
+            </button>
+        </section>
+        
+        <!-- 回忆展示区 -->
+        <section class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold flex items-center font-medium">
+                    <i class="fa fa-bookmark-o mr-2 text-primary/70"></i>我的回忆
+                </h2>
+                <div class="text-sm text-text-secondary bg-gray-100 px-3 py-1 rounded-full font-medium">
+                    <i class="fa fa-count mr-1"></i><span id="memoryCount">0</span> 个回忆
+                </div>
+            </div>
+            
+            <div id="memoriesContainer" class="space-y-6">
+                <div class="text-center text-text-secondary py-10 bg-white rounded-xl shadow-ios">
+                    <i class="fa fa-book-open text-4xl mb-3 opacity-50"></i>
+                    <p class="font-medium">还没有保存任何回忆</p>
+                    <p class="text-sm mt-1">添加你的第一个美好回忆吧</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 相册 -->
+        <section class="mb-16">
+            <h2 class="text-xl font-semibold mb-4 flex items-center font-medium">
+                <i class="fa fa-picture-o mr-2 text-primary/70"></i>相册
+            </h2>
+            
+            <div id="photoGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                <div class="col-span-full text-center text-text-secondary py-10 bg-white rounded-xl shadow-ios">
+                    <i class="fa fa-images text-4xl mb-3 opacity-50"></i>
+                    <p class="font-medium">相册还是空的</p>
+                    <p class="text-sm mt-1">添加照片来丰富你的回忆</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部工具栏 -->
+    <footer class="bg-white border-t border-gray-200 py-3 sticky bottom-0 z-40 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-around">
+                <button class="flex flex-col items-center text-primary p-1 font-medium">
+                    <i class="fa fa-home text-lg"></i>
+                    <span class="text-xs mt-1">首页</span>
+                </button>
+                <button id="addNewBtn" class="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-ios-hover -mt-8 border-4 border-white transform transition-ios hover:scale-105 active:scale-95">
+                    <i class="fa fa-plus text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 照片查看器模态框 -->
+    <div id="photoViewer" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
+        <button id="closeViewer" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 transition-ios p-2">
+            <i class="fa fa-times"></i>
+        </button>
+        <img id="viewerImage" src="" alt="大图预览" class="max-h-[90vh] max-w-[90vw] object-contain">
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-ios p-6 max-w-md w-full mx-4 transform transition-ios scale-95 opacity-0" id="modalContent">
+            <div class="text-center mb-4">
+                <i class="fa fa-exclamation-triangle text-yellow-500 text-4xl"></i>
+                <h3 class="text-xl font-semibold mt-3 font-medium">确认删除</h3>
+                <p class="text-text-secondary mt-2">您确定要删除这段回忆吗？此操作无法撤销。</p>
+            </div>
+            <div class="flex space-x-3 mt-6">
+                <button id="cancelDelete" class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-ios font-medium">
+                    取消
+                </button>
+                <button id="confirmDelete" class="flex-1 px-4 py-2.5 bg-danger text-white rounded-lg hover:bg-danger/90 transition-ios font-medium">
+                    确认删除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化日期计算 (2023年9月3日)
+        const startDate = new Date(2023, 8, 3);
+        const timeElapsedElement = document.getElementById('timeElapsed');
+        let memoryToDelete = null;
+        let memories = JSON.parse(localStorage.getItem('memories')) || [];
+        let photos = JSON.parse(localStorage.getItem('photos')) || [];
+        let timeBackground = localStorage.getItem('timeBackground') || '';
+        
+        // 更新时间显示
+        function updateTimeElapsed() {
+            const now = new Date();
+            const diffTime = Math.abs(now - startDate);
+            
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const remainingTime = diffTime % (1000 * 60 * 60 * 24);
+            
+            const diffHours = Math.floor(remainingTime / (1000 * 60 * 60));
+            const remainingTime2 = remainingTime % (1000 * 60 * 60);
+            
+            const diffMinutes = Math.floor(remainingTime2 / (1000 * 60));
+            const diffSeconds = Math.floor((remainingTime2 % (1000 * 60)) / 1000);
+            
+            const format = (num) => num.toString().padStart(2, '0');
+            const timeString = `${diffDays} 天 ${format(diffHours)}:${format(diffMinutes)}:${format(diffSeconds)}`;
+            timeElapsedElement.textContent = timeString;
+        }
+        
+        updateTimeElapsed();
+        const timeUpdateInterval = setInterval(updateTimeElapsed, 1000);
+        
+        // 恢复背景图
+        if (timeBackground) {
+            document.getElementById('timeBackground').style.backgroundImage = `url(${timeBackground})`;
+        }
+        
+        // 设置默认日期
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('memoryDate').value = today;
+        
+        // DOM元素
+        const memoryDateInput = document.getElementById('memoryDate');
+        const memoryTitleInput = document.getElementById('memoryTitle');
+        const memoryTextInput = document.getElementById('memoryText');
+        const photoUpload = document.getElementById('photoUpload');
+        const photoUploadArea = document.getElementById('photoUploadArea');
+        const addMemoryBtn = document.getElementById('addMemoryBtn');
+        const memoriesContainer = document.getElementById('memoriesContainer');
+        const photoGallery = document.getElementById('photoGallery');
+        const memoryCount = document.getElementById('memoryCount');
+        const addNewBtn = document.getElementById('addNewBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const photoViewer = document.getElementById('photoViewer');
+        const viewerImage = document.getElementById('viewerImage');
+        const closeViewer = document.getElementById('closeViewer');
+        const timeBgUpload = document.getElementById('timeBgUpload');
+        const timeBackgroundElement = document.getElementById('timeBackground');
+        const deleteModal = document.getElementById('deleteModal');
+        const modalContent = document.getElementById('modalContent');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const confirmDelete = document.getElementById('confirmDelete');
+        
+        // 处理背景更换
+        timeBgUpload.addEventListener('change', () => {
+            if (timeBgUpload.files.length) {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    timeBackgroundElement.style.opacity = "0";
+                    
+                    setTimeout(() => {
+                        timeBackgroundElement.style.backgroundImage = `url(${e.target.result})`;
+                        
+                        setTimeout(() => {
+                            timeBackgroundElement.style.opacity = "1";
+                            timeBackgroundElement.classList.add('bg-fade-in');
+                            setTimeout(() => {
+                                timeBackgroundElement.classList.remove('bg-fade-in');
+                            }, 1000);
+                        }, 50);
+                        
+                        localStorage.setItem('timeBackground', e.target.result);
+                    }, 500);
+                };
+                
+                reader.readAsDataURL(timeBgUpload.files[0]);
+            }
+        });
+        
+        // 渲染回忆列表 - 核心改进：确保每个删除按钮对应正确的回忆
+        function renderMemories() {
+            if (memories.length === 0) {
+                memoriesContainer.innerHTML = `
+                    <div class="text-center text-text-secondary py-10 bg-white rounded-xl shadow-ios">
+                        <i class="fa fa-book-open text-4xl mb-3 opacity-50"></i>
+                        <p class="font-medium">还没有保存任何回忆</p>
+                        <p class="text-sm mt-1">添加你的第一个美好回忆吧</p>
+                    </div>
+                `;
+                memoryCount.textContent = '0';
+                return;
+            }
+            
+            memoryCount.textContent = memories.length;
+            memoriesContainer.innerHTML = '';
+            
+            // 按日期降序排序
+            const sortedMemories = [...memories].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // 为每个回忆项创建唯一的删除按钮
+            sortedMemories.forEach((memory, index) => {
+                // 使用原始数组的索引而非排序后的索引，确保删除正确
+                const originalIndex = memories.findIndex(m => m.id === memory.id);
+                
+                const memoryElement = document.createElement('div');
+                memoryElement.className = 'bg-white rounded-xl shadow-ios overflow-hidden transition-ios hover:shadow-ios-hover transform hover:-translate-y-1 group';
+                
+                const date = new Date(memory.date);
+                const formattedDate = date.toLocaleDateString('zh-CN', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric'
+                });
+                
+                let photosHtml = '';
+                if (memory.photos && memory.photos.length > 0) {
+                    photosHtml = `
+                        <div class="grid grid-cols-3 gap-1 mt-3">
+                            ${memory.photos.map(photoId => {
+                                const photo = photos.find(p => p.id === photoId);
+                                return photo ? `
+                                    <img src="${photo.url}" alt="回忆照片" 
+                                         class="w-full h-20 object-cover rounded-md cursor-pointer memory-photo transition-ios hover:opacity-90"
+                                         data-id="${photo.id}">
+                                ` : '';
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                memoryElement.innerHTML = `
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-semibold font-medium">${memory.title}</h3>
+                            <!-- 存储原始索引，确保删除正确的回忆 -->
+                            <button class="delete-memory text-gray-300 hover:text-danger transition-ios p-1 rounded-full hover:bg-danger/10 opacity-0 group-hover:opacity-100" 
+                                    data-original-index="${originalIndex}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                        <p class="text-text-secondary text-sm mb-3">${formattedDate}</p>
+                        <p class="text-gray-700">${memory.text}</p>
+                        ${photosHtml}
+                    </div>
+                `;
+                
+                memoriesContainer.appendChild(memoryElement);
+            });
+            
+            // 为每个删除按钮添加点击事件，确保只删除对应的回忆
+            document.querySelectorAll('.delete-memory').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // 获取原始索引而非排序后的索引
+                    memoryToDelete = parseInt(e.currentTarget.dataset.originalIndex);
+                    
+                    // 验证索引有效性
+                    if (memoryToDelete >= 0 && memoryToDelete < memories.length) {
+                        deleteModal.classList.remove('hidden');
+                        setTimeout(() => {
+                            modalContent.classList.remove('scale-95', 'opacity-0');
+                            modalContent.classList.add('scale-100', 'opacity-100');
+                        }, 10);
+                    }
+                });
+            });
+            
+            // 照片点击事件
+            document.querySelectorAll('.memory-photo').forEach(photo => {
+                photo.addEventListener('click', (e) => {
+                    const photoId = e.currentTarget.dataset.id;
+                    const photo = photos.find(p => p.id === photoId);
+                    if (photo) {
+                        viewerImage.src = photo.url;
+                        photoViewer.classList.remove('hidden');
+                        photoViewer.classList.add('opacity-0');
+                        setTimeout(() => {
+                            photoViewer.classList.remove('opacity-0');
+                        }, 10);
+                    }
+                });
+            });
+        }
+        
+        // 渲染相册
+        function renderPhotos() {
+            if (photos.length === 0) {
+                photoGallery.innerHTML = `
+                    <div class="col-span-full text-center text-text-secondary py-10 bg-white rounded-xl shadow-ios">
+                        <i class="fa fa-images text-4xl mb-3 opacity-50"></i>
+                        <p class="font-medium">相册还是空的</p>
+                        <p class="text-sm mt-1">添加照片来丰富你的回忆</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            photoGallery.innerHTML = '';
+            
+            const sortedPhotos = [...photos].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedPhotos.forEach(photo => {
+                const photoElement = document.createElement('div');
+                photoElement.className = 'aspect-square relative overflow-hidden rounded-xl shadow-sm group transition-ios hover:shadow-ios-hover';
+                
+                photoElement.innerHTML = `
+                    <img src="${photo.url}" alt="相册照片" 
+                         class="w-full h-full object-cover transition-ios duration-500 group-hover:scale-110">
+                    <button class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-ios hover:bg-black"
+                            data-id="${photo.id}">
+                        <i class="fa fa-times"></i>
+                    </button>
+                `;
+                
+                photoGallery.appendChild(photoElement);
+                
+                photoElement.querySelector('img').addEventListener('click', () => {
+                    viewerImage.src = photo.url;
+                    photoViewer.classList.remove('hidden');
+                    photoViewer.classList.add('opacity-0');
+                    setTimeout(() => {
+                        photoViewer.classList.remove('opacity-0');
+                    }, 10);
+                });
+                
+                photoElement.querySelector('button').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const photoId = e.currentTarget.dataset.id;
+                    
+                    if (confirm('确定要删除这张照片吗？这会从所有回忆中移除它。')) {
+                        memories.forEach(memory => {
+                            if (memory.photos && memory.photos.includes(photoId)) {
+                                memory.photos = memory.photos.filter(id => id !== photoId);
+                            }
+                        });
+                        
+                        photos = photos.filter(p => p.id !== photoId);
+                        saveToLocalStorage();
+                        renderMemories();
+                        renderPhotos();
+                    }
+                });
+            });
+        }
+        
+        // 保存到本地存储
+        function saveToLocalStorage() {
+            localStorage.setItem('memories', JSON.stringify(memories));
+            localStorage.setItem('photos', JSON.stringify(photos));
+        }
+        
+        // 处理照片上传
+        photoUploadArea.addEventListener('click', () => {
+            photoUpload.click();
+        });
+        
+        photoUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            photoUploadArea.classList.add('border-primary', 'bg-primary/5');
+        });
+        
+        photoUploadArea.addEventListener('dragleave', () => {
+            photoUploadArea.classList.remove('border-primary', 'bg-primary/5');
+        });
+        
+        photoUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoUploadArea.classList.remove('border-primary', 'bg-primary/5');
+            
+            if (e.dataTransfer.files.length) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+        
+        photoUpload.addEventListener('change', () => {
+            if (photoUpload.files.length) {
+                handleFiles(photoUpload.files);
+            }
+        });
+        
+        function handleFiles(files) {
+            const fileArray = Array.from(files);
+            
+            fileArray.forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+                
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const newPhoto = {
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                        url: e.target.result,
+                        date: new Date().toISOString()
+                    };
+                    
+                    photos.push(newPhoto);
+                    
+                    if (memoryTitleInput.value || memoryTextInput.value || memoryDateInput.value) {
+                        if (!window.tempMemoryPhotos) {
+                            window.tempMemoryPhotos = [];
+                        }
+                        window.tempMemoryPhotos.push(newPhoto.id);
+                    }
+                    
+                    saveToLocalStorage();
+                    renderPhotos();
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // 添加新回忆
+        addMemoryBtn.addEventListener('click', () => {
+            const date = memoryDateInput.value;
+            const title = memoryTitleInput.value.trim();
+            const text = memoryTextInput.value.trim();
+            
+            if (!date) {
+                alert('请选择回忆日期');
+                return;
+            }
+            
+            if (!title && !text && (!window.tempMemoryPhotos || window.tempMemoryPhotos.length === 0)) {
+                alert('请添加标题、描述或照片');
+                return;
+            }
+            
+            const newMemory = {
+                id: Date.now().toString(),
+                title: title,
+                text: text,
+                photos: window.tempMemoryPhotos || [],
+                date: new Date(date).toISOString()
+            };
+            
+            memories.push(newMemory);
+            window.tempMemoryPhotos = [];
+            memoryTitleInput.value = '';
+            memoryTextInput.value = '';
+            
+            saveToLocalStorage();
+            renderMemories();
+            
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-4 py-2 rounded-lg shadow-ios z-50 transition-ios opacity-0';
+            notification.textContent = '回忆保存成功！';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.add('opacity-0');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 2000);
+        });
+        
+        // 底部添加按钮
+        addNewBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            
+            setTimeout(() => {
+                memoryDateInput.focus();
+            }, 500);
+        });
+        
+        // 保存按钮
+        saveBtn.addEventListener('click', () => {
+            if ((memoryTitleInput.value || memoryTextInput.value || memoryDateInput.value || (window.tempMemoryPhotos && window.tempMemoryPhotos.length > 0))) {
+                if (confirm('有未保存的内容，是否保存？')) {
+                    addMemoryBtn.click();
+                }
+            } else {
+                alert('当前没有需要保存的内容');
+            }
+        });
+        
+        // 分享按钮
+        shareBtn.addEventListener('click', () => {
+            if (navigator.share) {
+                navigator.share({
+                    title: '我的时光回忆录',
+                    text: `我记录了${memories.length}个美好回忆，一起来看看吧！`,
+                    url: window.location.href
+                }).catch(err => {
+                    console.log('分享失败:', err);
+                });
+            } else {
+                alert('您的浏览器不支持分享功能');
+            }
+        });
+        
+        // 关闭照片查看器
+        closeViewer.addEventListener('click', () => {
+            photoViewer.classList.add('opacity-0');
+            setTimeout(() => {
+                photoViewer.classList.add('hidden');
+                photoViewer.classList.remove('opacity-0');
+            }, 300);
+        });
+        
+        photoViewer.addEventListener('click', (e) => {
+            if (e.target === photoViewer) {
+                closeViewer.click();
+            }
+        });
+        
+        // 删除模态框事件
+        cancelDelete.addEventListener('click', () => {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+                memoryToDelete = null;
+            }, 300);
+        });
+        
+        confirmDelete.addEventListener('click', () => {
+            if (memoryToDelete !== null && memoryToDelete >= 0 && memoryToDelete < memories.length) {
+                // 获取要删除的回忆的照片ID
+                const photoIds = memories[memoryToDelete].photos || [];
+                
+                // 删除对应的回忆
+                memories.splice(memoryToDelete, 1);
+                
+                // 清理不再使用的照片
+                const remainingPhotoIds = memories.flatMap(m => m.photos || []);
+                const photosToRemove = photoIds.filter(id => !remainingPhotoIds.includes(id));
+                photos = photos.filter(photo => !photosToRemove.includes(photo.id));
+                
+                saveToLocalStorage();
+                renderMemories();
+                renderPhotos();
+                
+                // 关闭模态框
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    deleteModal.classList.add('hidden');
+                    memoryToDelete = null;
+                }, 300);
+                
+                // 显示提示
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-danger text-white px-4 py-2 rounded-lg shadow-ios z-50 transition-ios opacity-0';
+                notification.textContent = '回忆已删除';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.remove('opacity-0');
+                }, 10);
+                
+                setTimeout(() => {
+                    notification.classList.add('opacity-0');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 2000);
+            }
+        });
+        
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                cancelDelete.click();
+            }
+        });
+        
+        // 初始化页面
+        renderMemories();
+        renderPhotos();
+        
+        window.addEventListener('beforeunload', () => {
+            clearInterval(timeUpdateInterval);
+        });
+    </script>
+</body>
+</html>
+    
